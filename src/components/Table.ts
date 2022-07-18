@@ -59,6 +59,16 @@ export class Table implements ITable{
             }))
     }
 
+    // getTable = () => {
+    //     getUsers
+    //         .then(data => this.addUsers(data))
+    //         .then(() => {
+    //             getPosts
+    //                 .then(data => this.addPosts(data))
+    //                 .then(() => this.tablePrint())
+    //         })
+    // }
+
     addUsers = (users: any) => {
         for(let field in users) {
             const { id, name, username, email } = users[field]

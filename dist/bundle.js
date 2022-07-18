@@ -57,7 +57,6 @@ var Table = function Table(table) {
 
     this.tablePrint = function () {
         console.log(_this.users);
-        console.log("hi");
         console.log(_this.posts);
         // getUsers.then(data => this.addUsers(data))
         // this.addUsers(getUsers.then(data => data))
@@ -81,22 +80,28 @@ var Table = function Table(table) {
         //
         // this.tableElement.append(tbody)
     };
+    // getTable = () => {
+    //     getUsers
+    //         .then(data => this.addUsers(data))
+    //         .then(() => new Promise<IPosts>(() => {
+    //             for(let i = 1; i <= this.users.length; i++){
+    //                 fetch('https://jsonplaceholder.typicode.com/users/' + i + '/posts/')
+    //                     .then(response => response.json())
+    //                     .then(data => this.addPosts(data))
+    //             }
+    //             this.tablePrint()
+    //         }))
+    // }
     this.getTable = function () {
         index_1.getUsers.then(function (data) {
             return _this.addUsers(data);
         }).then(function () {
-            return new Promise(function () {
-                for (var i = 1; i <= _this.users.length; i++) {
-                    fetch('https://jsonplaceholder.typicode.com/users/' + i + '/posts/').then(function (response) {
-                        return response.json();
-                    }).then(function (data) {
-                        return _this.addPosts(data);
-                    });
-                }
-                _this.tablePrint();
+            index_1.getPosts.then(function (data) {
+                return _this.addPosts(data);
+            }).then(function () {
+                return _this.tablePrint();
             });
         });
-        // .then(() => this.tablePrint())
     };
     this.addUsers = function (users) {
         for (var field in users) {
