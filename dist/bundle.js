@@ -16,14 +16,23 @@ exports.getUsers = fetch('https://jsonplaceholder.typicode.com/users/').then(fun
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUsers = void 0;
+exports.getPosts = exports.getUsers = void 0;
 var BASE_URL = 'https://jsonplaceholder.typicode.com';
 exports.getUsers = fetch(BASE_URL + "/users").then(function (response) {
     return response.json();
 }).then(function (data) {
     return data;
 });
-// export const getPosts: Promise<IPosts> = fetch(`${BASE_URL}/users`)
+exports.getPosts = new Promise(function () {
+    for (var i = 1; i <= 10; i++) {
+        fetch(BASE_URL + "/users/" + i + '/posts/').then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            return data;
+        });
+    }
+});
+// export const getPosts: Promise<IPosts> = new Promise(`${BASE_URL}/users`)
 //     .then(() => {
 //     for(let i = 1; i <= 10; i++){
 //         fetch('https://jsonplaceholder.typicode.com/users/' + i + '/posts/')
@@ -47,9 +56,10 @@ var Table = function Table(table) {
     _classCallCheck(this, Table);
 
     this.tablePrint = function () {
-        index_1.getUsers.then(function (data) {
-            return _this.addUsers(data);
-        });
+        console.log(_this.users);
+        console.log("hi");
+        console.log(_this.posts);
+        // getUsers.then(data => this.addUsers(data))
         // this.addUsers(getUsers.then(data => data))
         //getUsers.then(data => this.addUsers(data))
         //getUsers.then(() => console.log("this.users"));
@@ -71,22 +81,40 @@ var Table = function Table(table) {
         //
         // this.tableElement.append(tbody)
     };
+    this.getTable = function () {
+        index_1.getUsers.then(function (data) {
+            return _this.addUsers(data);
+        }).then(function () {
+            return new Promise(function () {
+                for (var i = 1; i <= _this.users.length; i++) {
+                    fetch('https://jsonplaceholder.typicode.com/users/' + i + '/posts/').then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        return _this.addPosts(data);
+                    });
+                }
+                _this.tablePrint();
+            });
+        });
+        // .then(() => this.tablePrint())
+    };
     this.addUsers = function (users) {
         for (var field in users) {
             var _users$field = users[field],
+                id = _users$field.id,
                 name = _users$field.name,
                 username = _users$field.username,
                 email = _users$field.email;
 
             var address = users[field].address.street + ", " + users[field].address.suite + ", " + users[field].address.city + ", " + users[field].address.zipcode;
             _this.users.push({
+                id: id,
                 name: name,
                 username: username,
                 email: email,
                 address: address
             });
         }
-        console.log(_this.users);
     };
     this.addPosts = function (posts) {
         for (var field in posts) {
@@ -96,18 +124,18 @@ var Table = function Table(table) {
                 title = _posts$field.title,
                 body = _posts$field.body;
 
-            _this.posts[id] = {
+            _this.posts.push({
                 userId: userId,
                 id: id,
                 title: title,
                 body: body
-            };
+            });
         }
     };
     this.users = [];
     this.posts = [];
     this.tableElement = table;
-    this.tablePrint();
+    this.getTable();
 };
 
 exports.Table = Table;

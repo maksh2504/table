@@ -1,4 +1,4 @@
-import {getUsers} from "../api/index";
+import {getUsers, getPosts} from "../api/index";
 import {IUser} from "../types/user";
 import {IPosts} from "../types/posts";
 import {ITable} from "../types/table";
@@ -13,11 +13,14 @@ export class Table implements ITable{
         this.posts = [];
         this.tableElement = table;
 
-        this.tablePrint();
+        this.getTable();
     }
 
     tablePrint = () => {
-        getUsers.then(data => this.addUsers(data))
+        console.log(this.users)
+        console.log(this.posts)
+
+        // getUsers.then(data => this.addUsers(data))
 
         // this.addUsers(getUsers.then(data => data))
 
@@ -44,17 +47,27 @@ export class Table implements ITable{
     }
 
     getTable = () => {
-        getUsers.then(data => this.addUsers(data))
+        getUsers
+            .then(data => this.addUsers(data))
+            .then(() => new Promise<IPosts>(() => {
+                for(let i = 1; i <= this.users.length; i++){
+                    fetch('https://jsonplaceholder.typicode.com/users/' + i + '/posts/')
+                        .then(response => response.json())
+                        .then(data => this.addPosts(data))
+                }
+                this.tablePrint()
+            }))
     }
 
     addUsers = (users: any) => {
         for(let field in users) {
-            const { name, username, email } = users[field]
+            const { id, name, username, email } = users[field]
 
             const address = users[field].address.street + ", " + users[field].address.suite + ", " +
                 users[field].address.city + ", " + users[field].address.zipcode;
 
             this.users.push ({
+                id: id,
                 name: name,
                 username: username,
                 email: email,
@@ -74,6 +87,5 @@ export class Table implements ITable{
                 body: body
             } as IPosts);
         }
-
     }
 }
