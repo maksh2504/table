@@ -20,30 +20,50 @@ export class Table implements ITable{
         console.log(this.users)
         console.log(this.posts)
 
-        // getUsers.then(data => this.addUsers(data))
+        const tbody = document.createElement("tbody");
 
-        // this.addUsers(getUsers.then(data => data))
+        for(let i = 0; i < this.users.length - 1; i++) {
+            const row = document.createElement("tr");
 
-        //getUsers.then(data => this.addUsers(data))
-        //getUsers.then(() => console.log("this.users"));
+            const tdName = document.createElement("td");
+            tdName.innerText = this.users[i].name;
+            row.append(tdName);
 
-        // const tbody = document.createElement("tbody")
-        //
-        // for(let field in this.users) {
-        //     const row = document.createElement("tr")
-        //     const tdName = document.createElement("td")
-        //
-        //
-        //     // tdName.innerText = users[field].name
-        //     // console.log(tdName.innerText)
-        //     row.append(tdName)
-        //
-        //
-        //
-        //     tbody.append(row)
-        // }
-        //
-        // this.tableElement.append(tbody)
+            const tdUserName = document.createElement("td");
+            tdUserName.innerText = this.users[i].username;
+            row.append(tdUserName);
+
+            const tdEmail = document.createElement("td");
+            tdEmail.innerText = this.users[i].email;
+            row.append(tdEmail);
+
+            const tdAddress = document.createElement("td");
+            tdAddress.innerText = this.users[i].address;
+            row.append(tdAddress);
+
+            const tdPosts = document.createElement("td");
+            const ulPosts = document.createElement("ul");
+            for (let j = 0; j < this.posts.length - 1; j++){
+                console.log(this.users[i].id + " = " + this.posts[j].userId)
+                if (this.users[i].id == this.posts[j].userId){
+                    console.log(this.users[i].id + " = " + this.posts[j].userId)
+                    const liPosts = document.createElement("li");
+                    // liPosts.textContent = this.posts[j].title;
+
+                    liPosts.appendChild(document.createTextNode(this.posts[j].title));
+                    ulPosts.appendChild(liPosts);
+
+
+                    // ulPosts.append(liPosts);
+                }
+            }
+            tdPosts.append(ulPosts);
+            row.append(tdPosts);
+
+            tbody.append(row);
+        }
+
+        this.tableElement.append(tbody)
     }
 
     getTable = () => {
