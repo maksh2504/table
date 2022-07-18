@@ -1,13 +1,7 @@
 import {getUsers} from "../api/index";
-import {IUser} from "./User";
-import {IPosts} from "./Posts"
-
-
-interface ITable {
-    users: IUser[];
-    posts: IPosts[];
-    tableElement: HTMLElement
-}
+import {IUser} from "../types/user";
+import {IPosts} from "../types/posts";
+import {ITable} from "../types/table";
 
 export class Table implements ITable{
     users: IUser[];
@@ -18,12 +12,18 @@ export class Table implements ITable{
         this.users = [];
         this.posts = [];
         this.tableElement = table;
+
+        this.tablePrint();
     }
 
     tablePrint = () => {
-        console.log(this.users);
-        console.log(this.posts);
-        getUsers.then()
+        getUsers.then(data => this.addUsers(data))
+
+        // this.addUsers(getUsers.then(data => data))
+
+        //getUsers.then(data => this.addUsers(data))
+        //getUsers.then(() => console.log("this.users"));
+
         // const tbody = document.createElement("tbody")
         //
         // for(let field in this.users) {
@@ -43,19 +43,23 @@ export class Table implements ITable{
         // this.tableElement.append(tbody)
     }
 
+    getTable = () => {
+        getUsers.then(data => this.addUsers(data))
+    }
+
     addUsers = (users: any) => {
         for(let field in users) {
-            const { id, name, username, email } = users[field]
+            const { name, username, email } = users[field]
 
             const address = users[field].address.street + ", " + users[field].address.suite + ", " +
                 users[field].address.city + ", " + users[field].address.zipcode;
 
-            this.users[id] = {
+            this.users.push ({
                 name: name,
                 username: username,
                 email: email,
                 address: address
-            };
+            } as IUser);
         }
     }
 
@@ -63,12 +67,12 @@ export class Table implements ITable{
         for(let field in posts) {
             const { userId, id, title, body } = posts[field]
 
-            this.posts[id] = {
+            this.posts.push({
                 userId: userId,
                 id: id,
                 title: title,
                 body: body
-            };
+            } as IPosts);
         }
 
     }
